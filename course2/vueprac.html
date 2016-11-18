@@ -1,0 +1,58 @@
+<html>
+<title> Vue Practice Page</title>
+<head>
+    <script src="./vue.js"></script>
+</head>
+
+
+<body>
+
+<div id="todo-list-example">
+    <input v-model="newTodoText" v-on:keyup.enter="addNewTodo" placeholder="Add a todo">
+    <ul>
+        <li
+                is="todo-item"
+                v-for="(todo, index) in todos"
+                v-bind:title="todo"
+                v-bind:id="index"
+                v-on:remove="todos.splice(index, 1)"
+        ></li>
+    </ul>
+</div>
+
+
+<script>
+    Vue.component('todo-item', {
+        template: '\
+    <li>\
+      {{ title }}\
+      <button v-on:click="$emit(\'remove\')">delete</button>\
+        <button v-on:click="$emit(\'update\')">update</button>\
+    </li>\
+  ',
+        props: ['title','id']
+    })
+    new Vue({
+        el: '#todo-list-example',
+        data: {
+            newTodoText: '',
+            changeTodoText: 'AA',
+            todos: [
+
+            ]
+        },
+        methods: {
+            addNewTodo: function () {
+                this.todos.push(this.newTodoText)
+                this.newTodoText = ''
+            },
+            changeTodos: function (index) {
+                this.todos.push("1")
+                //this.todos.push(this.newTodoText)
+                //this.todos[index] = this.changeTodoText;
+            }
+        }
+    })
+</script>
+</body>
+</html>

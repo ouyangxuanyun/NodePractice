@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <link rel="stylesheet" type="text/css" href="https://cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <script src="./app.js"></script>
+</head>
+
+<body>
+<div class="container">
+    <div class="col-md-6 col-md-offset-3">
+        <h1>Vue demo</h1>
+        <div id="app">
+            <table class="table table-hover" v-cloak>
+
+                <tbody>
+                <tr v-for="book in books ">
+                    <td class="text-right">{{book.id}}</td>
+                    <td class="text-right">{{book.name}}</td>
+                    <td class="text-right">{{book.author}}</td>
+                    <td class="text-right">{{book.price}}</td>
+                    <template v-if="book.id%2==0">
+                        <td class="text-right">
+                            <button type="button" class="btn btn-success" @click="delBook(book)">删除</button>
+                        </td>
+                    </template>
+                </tr>
+                <tr>
+                    <td class="text-right" colspan="5">
+                        <h4>总价:{{sum}}</h4></td>
+                </tr>
+                </tbody>
+            </table>
+            <div id="add-book">
+                <legend>添加书籍</legend>
+                <div class="form-group">
+                    <label for="">书名</label>
+                    <input type="text" class="form-control" v-model="book.name">
+                </div>
+                <div class="form-group">
+                    <label for="">作者</label>
+                    <input type="text" class="form-control" v-model="book.author">
+                </div>
+                <div class="form-group">
+                    <label for="">价格</label>
+                    <input type="text" class="form-control" v-model="book.price">
+                </div>
+                <button class="btn btn-primary btn-block" v-on:click="addBook()">添加</button>
+                <button class="btn btn-primary btn-block" v-on:click="showsth()">改变</button>
+            </div>
+            <br>
+        </div>
+    </div>
+</div>
+
+
+<script src="../vue.js"></script>
+<script src="../vue-resource.js"></script>
+<!--<script src="https://cdn.jsdelivr.net/vue.resource/1.0.3/vue-resource.min.js"></script>-->
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            sortparam: '',
+            book: {
+                id: 0,
+                author: '',
+                name: '',
+                price: ''
+            },
+            books: [{"id": 1, "author": "aa", "name": "aa", "price": 32}, {
+                "id": 2,
+                "author": "bb",
+                "name": "bb",
+                "price": 30
+            }],
+            testdata:''
+        },
+        computed: {
+            sum: function () {
+                var result = 0;
+                for (var i = 0; i < this.books.length; i++) {
+                    result = Number(this.books[i].price) + result;
+                }
+                ;
+                return result;
+            }
+        },
+
+        methods: {
+            showsth: function () {
+                window.alert(this.testdata);
+                var vm = this;
+                vm.$http.get('../test.json')
+                        .then(function (response) {
+                            window.alert(response.body)
+                            vm.$set('books', response.body)
+                            window.alert(this.testdata)
+                            //vm.books.push(response.body());
+                        }, function (response) {
+                            window.alert("Error")
+                        });
+
+//                this.$http.get('http://localhost:8888/', function(data) {
+//                    this.$set('books', data);
+//                }).error(function(data, status, request) {
+//                    console.log('fail' + status + "," + request);
+//                })
+            },
+            addBook: function () {
+                window.alert("AAAAAA")
+
+                this.book.id = this.books.length + 1;
+                this.books.push(this.book);
+                this.book = '';
+            },
+            delBook: function (book) {
+                this.books.$remove(book);
+            },
+            sortBy: function (sortparam) {
+
+                this.sortparam = sortparam;
+            }
+        }
+    });
+</script>
+</body>
+</html>

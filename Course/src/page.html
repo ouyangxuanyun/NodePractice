@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+
+<body>
+<div id="app-4">
+    <button v-on:click="addtest">添加</button>
+    <ol>
+        <li v-for="todo in todos">
+            {{ todo.text }}
+        </li>
+        <li v-for="test in tests">
+            {{ test.name }}
+        </li>
+    </ol>
+</div>
+
+
+
+<!--<script src="../vue.js"></script>-->
+<!--<script src="../vue-resource.js"></script>-->
+<script src="http://cdnjs.cloudflare.com/ajax/libs/vue/1.0.7/vue.min.js"></script>
+<script src="https://cdn.jsdelivr.net/vue.resource/1.0.3/vue-resource.min.js"></script>
+
+<script>
+    var app4 = new Vue({
+        el: '#app-4',
+        data: {
+            todos: [
+                { text: 'Learn JavaScript' },
+                { text: 'Learn Vue' },
+                { text: 'Build something awesome' }
+            ],
+            tests:[{"_id":"582979daa796dc8fec1444f2","name":"job3","done":false}]
+        },
+        methods:{
+            addtest: function () {
+                window.alert("function start")
+                this.$http.get('http://localhost:8888/secondepage')
+                        .then(function (response) {
+                            this.$set('tests', response.body)
+                        }, function (response) {
+                            window.alert("Error")
+                        });
+            },
+            showsth:function () {
+                window.alert("showsth in use")
+            }
+        }
+    })
+</script>
+</body>
+
+</html>

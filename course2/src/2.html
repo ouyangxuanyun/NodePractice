@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <link rel="stylesheet" type="text/css" href="https://cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css">
+
+</head>
+<style>
+    [v-cloak] {
+        display: none;
+    }
+</style>
+
+
+<body>
+<div id="example-1">
+    <li v-for="book in books">
+        <td>{{ book.id }}</td>
+        <td>{{ book.author }}</td>
+        <td>{{ book.name }}</td>
+        <td>{{ book.price }}</td>
+    </li>
+</div>
+
+
+<script src="http://cdnjs.cloudflare.com/ajax/libs/vue/1.0.7/vue.min.js"></script>
+<script src="../vue-resource.js"></script>
+
+<script>
+    new Vue({
+        el: '#example-1',
+        data: {
+            items: [
+                {message: 'foo' },
+                {message: 'Bar' }
+            ],
+            books:[{
+                id: 1,
+                author: '曹雪芹',
+                name: '红楼梦',
+                price: 32.0
+            }, {
+                id: 2,
+                author: '施耐庵',
+                name: '水浒传',
+                price: 30.0
+            }, {
+                id: '3',
+                author: '罗贯中',
+                name: '三国演义',
+                price: 24.0
+            }, {
+                id: 4,
+                author: '吴承恩',
+                name: '西游记',
+                price: 20.0
+            }]
+        }
+    })
+</script>
+</body>
+</html>
