@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>待办事项</title>
+    <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/bootstrap-table/bootstrap-table.css">
+</head>
+<body>
+<div class="col-md-6">
+    <div class="toolbar pull-right">
+        <button id="addbutton" class="btn btn-default" type="button" data-toggle="modal" data-target="#myModal">增加</button>
+        <button id="modbutton" class="btn btn-default">修改</button>
+        <button id="delbutton" class="btn btn-default">删除</button>
+    </div><br/><br/>
+    <table id="table"></table>
+
+
+    <div  class="container">
+        <!-- 模态框（Modal） -->
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                            &times;
+                        </button>
+                        <h4 class="modal-title" id="myModalLabel">
+                            待办信息
+                        </h4>
+                    </div>
+                    <!-- form start -->
+                    <form class="form-horizontal">
+                        <div class="box-body">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">待办信息</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" id="todo" name="todo" placeholder="待办内容">
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.box-body -->
+                        <div class="box-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                            <button type="submit" class="btn btn-primary pull-right">确定</button>
+                        </div>
+                        <!-- /.box-footer -->
+                    </form>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal -->
+
+        </div>
+    </div>
+</div>
+<script src="/plugins/jQuery/jquery-2.2.3.min.js"></script>
+<script src="/bootstrap/js/bootstrap.min.js"></script>
+<script src="/bootstrap-table/bootstrap-table.js"></script>
+<script src="/bootstrap-table/locale/bootstrap-table-zh-CN.js"></script>
+<script>
+    var loadtododata = function () {
+        $.get("/todos",{},function(data){
+             $('#table').bootstrapTable('load', data) }
+        )}
+    $(document).ready(function(){
+        var action="";
+        $("#addbutton").click(function () {
+            action="/addtodo";
+        })
+        $("#modbutton").click(function () {
+            var todos = $('#table').bootstrapTable('getSelections');
+            if(todos.length == 0){
+                alert("请选择");
+                return;
+            }else if(todos.length>1){
+                alert("只能选择一条");
+                return;
+            }
+            var todo = todos[0];
+            action="/modtodo";
+            $('#myModal').modal('show');
+            $("#todo").val(todo.todo);
+        })
+        $("#delbutton").click(function () {
+            var todos = $('#table').bootstrapTable('getSelections');
+            console.log(todos);
+            if(todos.length == 0){
+                alert("请选择人员");
+                return;
+            }
+            var todosids="";
+            todos.forEach(function (todo) {
+                todosids+=";"+todo.id;
+            })
+            console.log(todosids);
+            $.post('/deltodo',{ids:todosids},function (result) {
+                loadtododata();
+            })
+        })
+        $(".form-horizontal").submit(function (event) {
+            event.preventDefault();
+            var todo={
+                "todo":$("#todo").val()
+            }
+            if(action=="/modtodo"){
+                todo.id=$('#table').bootstrapTable('getSelections')[0].id;
+            }
+            $.post(action, todo, function(result) {
+                if(result=="OK"){
+                    loadtododata();
+                    $('#myModal').modal('hide');
+                }
+            });
+        })
+        $('#table').bootstrapTable({
+            url: '/todos',
+            columns: [{
+                field:'state',
+                checkbox:true
+            }, {
+                field: 'id',
+                title: 'ID',
+                visible:false
+            },{
+                field: 'todo',
+                title: '待办事项'
+            },{
+                field: 'time',
+                title: '时间'
+            }]
+        });
+    });
+
+</script>
+</body>
+</html>
